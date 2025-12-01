@@ -1,7 +1,31 @@
-CREATE USER app_user WITH PASSWORD 'app_password';
-CREATE DATABASE app_db OWNER app_user;
-\connect app_db;
-CREATE TABLE users(id SERIAL PRIMARY KEY,name VARCHAR(100),email VARCHAR(100));
-CREATE TABLE items(id SERIAL PRIMARY KEY,name VARCHAR(100),price NUMERIC(10,2),user_id INT REFERENCES users(id));
-INSERT INTO users(name,email) VALUES('Alice','alice@example.com'),('Bob','bob@example.com');
-INSERT INTO items(name,price,user_id) VALUES('Milk Tea',60,1),('Fried Chicken',90,2),('Midnight Snack Set',150,1);
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS rounds (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title text NOT NULL,
+  store_name text NOT NULL,
+  pick_up_time timestamptz NOT NULL,
+  max_orders integer,
+  location_default text,
+  note text,
+  status text NOT NULL DEFAULT 'open',
+  created_by text,
+  created_at timestamptz NOT NULL DEFAULT NOW(),
+  updated_at timestamptz NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  round_id uuid NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
+  customer text NOT NULL,
+  location text,
+  item_name text NOT NULL,
+  qty integer NOT NULL DEFAULT 1,
+  size text,
+  sweetness text,
+  ice_level text,
+  note text,
+  status text NOT NULL DEFAULT 'pending',
+  created_at timestamptz NOT NULL DEFAULT NOW(),
+  updated_at timestamptz NOT NULL DEFAULT NOW()
+);

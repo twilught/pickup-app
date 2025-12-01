@@ -1,4 +1,10 @@
 FROM nginx:1.27-alpine
-COPY index.html /usr/share/nginx/html/
-COPY app.js /usr/share/nginx/html/
+
+WORKDIR /usr/share/nginx/html
+
+COPY index.html ./
+COPY app.js ./
+
 EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
