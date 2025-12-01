@@ -11,10 +11,11 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks: [app-net]
   api:
-    build: ./backend
-    env_file: .env
-    depends_on: [db]
-    ports: ["4000:4000"]
+    build: ./api
+    container_name: pickup-app-pipeline-api-1
+    ports:
+    - "4000:4000"   # ✅ ชัดเจน เปิดให้ Jenkins เข้าได้
+
     networks: [app-net]
   frontend:
     build: ./frontend
